@@ -302,7 +302,7 @@ input[type=file]:hover{border-color:var(--brand)}
     <div class="tb-divider"></div>
     <span class="tb-title">Ficha de Traspaso</span>
   </div>
-  <div class="tb-badge">Ventas → Onboarding · v9</div>
+  <div class="tb-badge">Ventas → Onboarding</div>
 </div>
 
 <div class="wrap">
@@ -348,7 +348,7 @@ input[type=file]:hover{border-color:var(--brand)}
         <label class="lbl">Seleccionar tipo <span class="req">*</span></label>
         <div class="pill-wrap" id="g-tipo">
           <label class="pill" onclick="pickPill(this,'g-tipo')">
-            <input type="radio" name="tipo_piloto" value="POC"> 🧪 POC – Prueba de concepto (pagado)
+            <input type="radio" name="tipo_piloto" value="POC"> 🧪 POC – Prueba de concepto
           </label>
           <label class="pill" onclick="pickPill(this,'g-tipo')">
             <input type="radio" name="tipo_piloto" value="CLIENTE"> 🏢 Cliente
@@ -513,7 +513,7 @@ input[type=file]:hover{border-color:var(--brand)}
       <div class="cblock">
         <div class="chead">
           <span class="cbadge">Capitán</span>
-          <span class="cdesc">Gerente / Tomador de decisión — NO es TI</span>
+          <span class="cdesc">Gerente / Tomador de decisión</span>
         </div>
         <div class="cfields">
           <div class="row3">
@@ -616,12 +616,12 @@ input[type=file]:hover{border-color:var(--brand)}
         <label class="lbl">Correos de destino
           <span class="hint">Separados por coma — n8n enviará el correo a estas direcciones</span>
         </label>
-        <input type="text" id="correos_destino" placeholder="tabata@apprecio.com, marcelo@apprecio.com">
+        <input type="text" id="correos_destino" placeholder="@apprecio.com, @dcanje.com">
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-        <button class="btn btn-out" onclick="dlExcel()">⬇ Solo descargar Excel</button>
+        <button class="btn btn-out" onclick="dlExcel()">⬇ Descargar Excel</button>
         <button class="btn btn-ok" id="btn-send" onclick="sendN8N()">
-          <span id="send-txt">📤 Enviar vía n8n + Descargar Excel</span>
+          <span id="send-txt">📤 Enviar por Correo</span>
         </button>
       </div>
       <div style="margin-top:16px">
@@ -637,7 +637,7 @@ input[type=file]:hover{border-color:var(--brand)}
 // ─────────────────────────────────────────────────────────────────
 //  ⚙️  CONFIGURACIÓN — pega aquí tu URL de n8n antes de publicar
 // ─────────────────────────────────────────────────────────────────
-const WEBHOOK_URL = 'https://TU-INSTANCIA.app.n8n.cloud/webhook/ficha-traspaso';
+const WEBHOOK_URL = 'https://n8n.openip.cl/webhook/ficha-traspaso';
 // ─────────────────────────────────────────────────────────────────
 
 let cur = 1;
