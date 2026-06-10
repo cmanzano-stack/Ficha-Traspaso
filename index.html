@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Traspaso · apprecio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:    #FA345E;
+  --brand-dk: #D42A4E;
+  --brand-lt: #FDE8ED;
+  --brand-xl: #FEF3F6;
+  --ok:       #065F46;
+  --ok-lt:    #F0FFF4;
+  --g0:       #0F172A;
+  --g1:       #1E293B;
+  --g2:       #475569;
+  --g3:       #94A3B8;
+  --g4:       #E2E8F0;
+  --g5:       #F8FAFC;
+  --white:    #FFFFFF;
+  --font:     'Montserrat', Arial, sans-serif;
+  --rad:      10px;
+  --rad-sm:   7px;
+  --sh:       0 4px 24px rgba(250,52,94,.08);
+  --sh-card:  0 2px 20px rgba(15,23,42,.07);
+}
+body{font-family:var(--font);background:var(--g5);color:var(--g0);min-height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:#0F172A;
+  height:60px;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(15,23,42,.3);
+}
+.tb-left{display:flex;align-items:center;gap:14px}
+.tb-logo{
+  height:28px;display:flex;align-items:center;
+}
+/* SVG apprecio pixel-robot icon inline */
+.tb-logo svg{height:28px;width:auto}
+.tb-wordmark{
+  font-size:18px;font-weight:800;color:var(--brand);
+  letter-spacing:-.3px;
+}
+.tb-divider{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 2px}
+.tb-title{color:rgba(255,255,255,.7);font-size:12px;font-weight:600;letter-spacing:.3px}
+.tb-badge{
+  background:rgba(250,52,94,.15);border:1px solid rgba(250,52,94,.25);
+  color:var(--brand);font-size:10px;font-weight:700;
+  padding:4px 11px;border-radius:20px;letter-spacing:.4px;
+}
+
+/* ── LAYOUT ── */
+.wrap{max-width:760px;margin:0 auto;padding:26px 16px 80px}
+
+/* ── PROGRESS ── */
+.prog-card{
+  background:var(--white);border-radius:var(--rad);
+  padding:18px 22px 16px;margin-bottom:22px;
+  box-shadow:var(--sh-card);
+}
+.prog-row{display:flex;align-items:flex-start}
+.prog-step{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:7px;cursor:pointer;position:relative;
+}
+.prog-step::after{
+  content:'';position:absolute;top:14px;
+  left:calc(50% + 15px);right:calc(-50% + 15px);
+  height:2px;background:var(--g4);z-index:0;transition:background .3s;
+}
+.prog-step:last-child::after{display:none}
+.prog-step.done::after{background:var(--brand)}
+.pdot{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--g4);background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--g3);
+  position:relative;z-index:1;transition:all .22s;
+}
+.prog-step.active .pdot{
+  border-color:var(--brand);background:var(--brand);color:#fff;
+  box-shadow:0 0 0 4px var(--brand-lt);
+}
+.prog-step.done .pdot{border-color:var(--brand-dk);background:var(--brand-dk);color:#fff}
+.plabel{font-size:9px;font-weight:700;color:var(--g3);letter-spacing:.5px;text-transform:uppercase;text-align:center}
+.prog-step.active .plabel,.prog-step.done .plabel{color:var(--brand)}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--rad);box-shadow:var(--sh-card);overflow:hidden;display:none}
+.card.active{display:block}
+.card-head{
+  background:var(--g0);
+  padding:20px 28px;display:flex;align-items:center;gap:16px;
+  border-bottom:3px solid var(--brand);
+}
+.ch-num{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:#fff;flex-shrink:0;
+}
+.ch-title{color:#fff;font-size:16px;font-weight:800;letter-spacing:.1px}
+.ch-sub{color:rgba(255,255,255,.5);font-size:11px;font-weight:500;margin-top:3px}
+.card-body{padding:26px}
+
+/* ── FIELDS ── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.fg{margin-bottom:16px}
+.fg:last-child{margin-bottom:0}
+
+label.lbl{
+  display:block;font-size:10px;font-weight:800;
+  color:var(--g2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;
+}
+label.lbl .req{color:var(--brand);margin-left:2px}
+label.lbl .hint{
+  display:block;font-size:10px;font-weight:500;color:var(--g3);
+  text-transform:none;letter-spacing:0;margin-top:2px;
+}
+
+input[type=text],input[type=email],input[type=tel],
+input[type=date],input[type=url],input[type=number],
+select,textarea{
+  width:100%;padding:10px 13px;
+  border:1.5px solid var(--g4);border-radius:var(--rad-sm);
+  font-family:var(--font);font-size:13px;font-weight:500;color:var(--g0);
+  background:var(--white);transition:border-color .15s,box-shadow .15s;outline:none;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-lt);
+}
+textarea{resize:vertical;min-height:78px;line-height:1.6}
+select{
+  cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;
+}
+
+/* ── PILL ── */
+.pill-wrap{display:flex;gap:10px;flex-wrap:wrap}
+.pill{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 18px;border:1.5px solid var(--g4);border-radius:30px;
+  cursor:pointer;font-size:13px;font-weight:600;color:var(--g2);
+  background:var(--white);transition:all .15s;user-select:none;
+}
+.pill:hover{border-color:var(--brand);color:var(--brand)}
+.pill input{display:none}
+.pill.on{border-color:var(--brand);background:var(--brand-lt);color:var(--brand-dk);font-weight:700}
+
+/* ── MODULE chips ── */
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.mchip{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;border:1.5px solid var(--g4);border-radius:var(--rad-sm);
+  cursor:pointer;font-size:12px;font-weight:600;color:var(--g2);
+  background:var(--white);transition:all .15s;user-select:none;
+}
+.mchip:hover{border-color:var(--brand);color:var(--brand)}
+.mchip input{display:none}
+.mic{
+  width:28px;height:28px;border-radius:6px;background:var(--g5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;transition:background .15s;
+}
+.mchip.on{border-color:var(--brand);background:var(--brand-xl);color:var(--brand-dk)}
+.mchip.on .mic{background:var(--brand-lt)}
+
+/* ── CONTACT block ── */
+.cblock{border:1.5px solid var(--g4);border-radius:var(--rad);overflow:hidden;margin-bottom:16px}
+.cblock:last-child{margin-bottom:0}
+.chead{
+  background:var(--g1);padding:11px 18px;
+  display:flex;align-items:center;gap:10px;
+}
+.cbadge{
+  background:var(--brand);color:#fff;
+  font-size:10px;font-weight:800;
+  padding:3px 10px;border-radius:12px;letter-spacing:.5px;text-transform:uppercase;
+}
+.cdesc{color:rgba(255,255,255,.55);font-size:11px;font-weight:500}
+.cfields{padding:16px}
+
+/* ── DIVIDER ── */
+.div{height:1px;background:var(--g4);margin:20px 0}
+.sec-lbl{font-size:10px;font-weight:800;color:var(--g2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+
+/* ── FILE ── */
+input[type=file]{
+  padding:10px 14px;font-size:12px;font-family:var(--font);
+  border:1.5px dashed var(--g4);border-radius:var(--rad-sm);
+  cursor:pointer;color:var(--g2);width:100%;
+}
+input[type=file]:hover{border-color:var(--brand)}
+
+/* ── NAV ── */
+.nav{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:24px;padding-top:18px;border-top:1.5px solid var(--g4);
+}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 22px;border-radius:var(--rad-sm);border:none;
+  font-family:var(--font);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .15s;letter-spacing:.1px;
+}
+.btn-brand{background:var(--brand);color:#fff}
+.btn-brand:hover{background:var(--brand-dk);transform:translateY(-1px);box-shadow:0 6px 18px rgba(250,52,94,.28)}
+.btn-out{background:var(--white);color:var(--g2);border:1.5px solid var(--g4)}
+.btn-out:hover{border-color:var(--g2);color:var(--g0)}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-ok:hover{background:#054F3A;transform:translateY(-1px);box-shadow:0 6px 14px rgba(6,95,70,.25)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ── SUMMARY ── */
+.sum-card{background:var(--white);border-radius:var(--rad);box-shadow:var(--sh-card);overflow:hidden;display:none}
+.sum-card.active{display:block}
+.sum-head{
+  background:var(--g0);padding:26px;text-align:center;
+  border-bottom:3px solid var(--brand);
+}
+.sum-head h2{color:#fff;font-size:20px;font-weight:800;margin-bottom:6px}
+.sum-head p{color:rgba(255,255,255,.5);font-size:12px;font-weight:500}
+.sum-body{padding:26px}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px}
+.sum-item{
+  background:var(--g5);border-radius:var(--rad-sm);
+  padding:11px 15px;border-left:3px solid var(--brand);
+}
+.sum-lbl{font-size:9px;font-weight:800;color:var(--g3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sum-val{font-size:13px;font-weight:600;color:var(--g0)}
+
+/* ── WEBHOOK banner ── */
+.whook-banner{
+  background:var(--brand-xl);border:1.5px solid var(--brand-lt);
+  border-radius:var(--rad-sm);padding:12px 16px;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:600;color:var(--brand-dk);
+}
+.wpulse{
+  width:8px;height:8px;border-radius:50%;background:var(--brand);flex-shrink:0;
+  box-shadow:0 0 0 3px var(--brand-lt);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  padding:13px 20px;border-radius:var(--rad-sm);
+  font-family:var(--font);font-size:13px;font-weight:700;color:#fff;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.18);
+  transform:translateY(80px);opacity:0;z-index:999;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);max-width:340px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:var(--g0)}
+.toast.good{background:var(--ok)}
+.toast.bad{background:var(--brand-dk)}
+
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .5s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .row2,.row3{grid-template-columns:1fr}
+  .mod-grid{grid-template-columns:1fr 1fr}
+  .sum-grid{grid-template-columns:1fr}
+  .wrap{padding:12px 10px 60px}
+  .card-body{padding:16px}
+  .topbar{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="tb-left">
+    <!-- apprecio pixel-robot SVG (replicado del logo) -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" height="28" fill="#FA345E">
+      <rect x="6" y="8" width="36" height="32" rx="2"/>
+      <rect x="10" y="12" width="12" height="12" rx="1" fill="#0F172A"/>
+      <rect x="26" y="12" width="12" height="12" rx="1" fill="#0F172A"/>
+      <rect x="16" y="28" width="4" height="4" rx="1" fill="#0F172A"/>
+      <rect x="28" y="28" width="4" height="4" rx="1" fill="#0F172A"/>
+      <rect x="2" y="16" width="4" height="8" rx="2"/>
+      <rect x="42" y="16" width="4" height="8" rx="2"/>
+      <rect x="14" y="40" width="6" height="6" rx="2"/>
+      <rect x="28" y="40" width="6" height="6" rx="2"/>
+    </svg>
+    <span class="tb-wordmark">apprecio</span>
+    <div class="tb-divider"></div>
+    <span class="tb-title">Ficha de Traspaso</span>
+  </div>
+  <div class="tb-badge">Ventas → Onboarding · v9</div>
+</div>
+
+<div class="wrap">
+
+  <!-- PROGRESS -->
+  <div class="prog-card">
+    <div class="prog-row">
+      <div class="prog-step active" data-s="1" onclick="gotoStep(1)">
+        <div class="pdot">1</div><div class="plabel">Piloto</div>
+      </div>
+      <div class="prog-step" data-s="2" onclick="gotoStep(2)">
+        <div class="pdot">2</div><div class="plabel">Cliente</div>
+      </div>
+      <div class="prog-step" data-s="3" onclick="gotoStep(3)">
+        <div class="pdot">3</div><div class="plabel">Contexto</div>
+      </div>
+      <div class="prog-step" data-s="4" onclick="gotoStep(4)">
+        <div class="pdot">4</div><div class="plabel">Módulos</div>
+      </div>
+      <div class="prog-step" data-s="5" onclick="gotoStep(5)">
+        <div class="pdot">5</div><div class="plabel">Contactos</div>
+      </div>
+      <div class="prog-step" data-s="6" onclick="gotoStep(6)">
+        <div class="pdot">6</div><div class="plabel">Cierre</div>
+      </div>
+      <div class="prog-step" data-s="7" onclick="gotoStep(7)">
+        <div class="pdot">✓</div><div class="plabel">Enviar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ① TIPO DE PILOTO -->
+  <div class="card active" id="s1">
+    <div class="card-head">
+      <div class="ch-num">①</div>
+      <div>
+        <div class="ch-title">Tipo de Piloto</div>
+        <div class="ch-sub">Modalidad de entrada del cliente</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="fg">
+        <label class="lbl">Seleccionar tipo <span class="req">*</span></label>
+        <div class="pill-wrap" id="g-tipo">
+          <label class="pill" onclick="pickPill(this,'g-tipo')">
+            <input type="radio" name="tipo_piloto" value="POC"> 🧪 POC – Prueba de concepto (pagado)
+          </label>
+          <label class="pill" onclick="pickPill(this,'g-tipo')">
+            <input type="radio" name="tipo_piloto" value="CLIENTE"> 🏢 Cliente
+          </label>
+        </div>
+      </div>
+      <div class="nav">
+        <div></div>
+        <button class="btn btn-brand" onclick="next(1)">Datos del cliente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② DATOS DEL CLIENTE -->
+  <div class="card" id="s2">
+    <div class="card-head">
+      <div class="ch-num">②</div>
+      <div>
+        <div class="ch-title">Datos del Cliente</div>
+        <div class="ch-sub">Información básica de la empresa</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Nombre del cliente <span class="req">*</span></label>
+          <input type="text" id="nombre_cliente" placeholder="Ej: Falabella Retail">
+        </div>
+        <div class="fg">
+          <label class="lbl">País <span class="req">*</span></label>
+          <select id="pais">
+            <option value="">Seleccionar…</option>
+            <option>Chile</option><option>México</option><option>Colombia</option>
+            <option>Perú</option><option>Argentina</option><option>Ecuador</option>
+            <option>Uruguay</option><option>Bolivia</option><option>Paraguay</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Rubro / Industria <span class="req">*</span></label>
+          <input type="text" id="rubro" placeholder="Ej: Retail, Banca, Salud…">
+        </div>
+        <div class="fg">
+          <label class="lbl">Sitio web</label>
+          <input type="url" id="sitio_web" placeholder="https://empresa.com">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Nombre del Programa <span class="req">*</span></label>
+          <input type="text" id="nombre_programa" placeholder="Ej: Programa Reconoce">
+        </div>
+        <div class="fg">
+          <label class="lbl">N° total de usuarios <span class="req">*</span></label>
+          <input type="number" id="cant_usuarios" placeholder="Ej: 500" min="1">
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-out" onclick="prev(2)">← Anterior</button>
+        <button class="btn btn-brand" onclick="next(2)">Datos de prospección →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ PROSPECCIÓN -->
+  <div class="card" id="s3">
+    <div class="card-head">
+      <div class="ch-num">③</div>
+      <div>
+        <div class="ch-title">Datos de Prospección</div>
+        <div class="ch-sub">Contexto comercial del cliente</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="fg">
+        <label class="lbl">Dolores / Problemas principales detectados <span class="req">*</span></label>
+        <textarea id="dolores" rows="3" placeholder="Describe los problemas o desafíos clave que motivaron la conversación…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Objetivos estratégicos y KPIs esperados <span class="req">*</span></label>
+        <textarea id="objetivos" rows="3" placeholder="¿Qué métricas o metas esperan impactar con apprecio?…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Casos de uso prioritarios a corto plazo <span class="req">*</span></label>
+        <textarea id="casos_uso" rows="3" placeholder="¿Qué quieren hacer primero con la plataforma?…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Expectativas de tiempos de uso</label>
+        <textarea id="expectativas" rows="2" placeholder="¿Tienen urgencias o plazos definidos?…"></textarea>
+      </div>
+      <div class="nav">
+        <button class="btn btn-out" onclick="prev(3)">← Anterior</button>
+        <button class="btn btn-brand" onclick="next(3)">Módulos →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ MÓDULOS -->
+  <div class="card" id="s4">
+    <div class="card-head">
+      <div class="ch-num">④</div>
+      <div>
+        <div class="ch-title">Módulos a Probar</div>
+        <div class="ch-sub">Marca los módulos que se activarán en el piloto</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="fg">
+        <label class="lbl">Módulos del piloto</label>
+        <div class="mod-grid">
+          <label class="mchip" onclick="togChip(this)">
+            <input type="checkbox" value="Encuestas (NPS/CSAT)">
+            <div class="mic">📊</div>Encuestas NPS/CSAT
+          </label>
+          <label class="mchip" onclick="togChip(this)">
+            <input type="checkbox" value="Reconocimiento entre pares">
+            <div class="mic">🏆</div>Reconocimiento entre pares
+          </label>
+          <label class="mchip" onclick="togChip(this)">
+            <input type="checkbox" value="Capacitaciones">
+            <div class="mic">📚</div>Capacitaciones
+          </label>
+          <label class="mchip" onclick="togChip(this)">
+            <input type="checkbox" value="Desafíos / Retos">
+            <div class="mic">🎯</div>Desafíos / Retos
+          </label>
+          <label class="mchip" onclick="togChip(this)">
+            <input type="checkbox" value="Hitos y Milestones">
+            <div class="mic">🚀</div>Hitos y Milestones
+          </label>
+          <label class="mchip" onclick="togChip(this)">
+            <input type="checkbox" value="Canjes / Rewards">
+            <div class="mic">🎁</div>Canjes / Rewards
+          </label>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:14px">
+        <label class="lbl">Otros módulos previstos (próximos 6 meses)
+          <span class="hint">Módulos planificados fuera del piloto</span>
+        </label>
+        <textarea id="otros_modulos" rows="2" placeholder="Ej: Gamificación avanzada, Integración HRIS…"></textarea>
+      </div>
+      <div class="nav">
+        <button class="btn btn-out" onclick="prev(4)">← Anterior</button>
+        <button class="btn btn-brand" onclick="next(4)">Contactos →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ CONTACTOS -->
+  <div class="card" id="s5">
+    <div class="card-head">
+      <div class="ch-num">⑤</div>
+      <div>
+        <div class="ch-title">Contactos Clave del Cliente</div>
+        <div class="ch-sub">Personas responsables del piloto</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="cblock">
+        <div class="chead">
+          <span class="cbadge">Capitán</span>
+          <span class="cdesc">Gerente / Tomador de decisión — NO es TI</span>
+        </div>
+        <div class="cfields">
+          <div class="row3">
+            <div class="fg">
+              <label class="lbl">Nombre y apellido <span class="req">*</span></label>
+              <input type="text" id="cap_nombre" placeholder="Nombre Apellido">
+            </div>
+            <div class="fg">
+              <label class="lbl">Correo electrónico <span class="req">*</span></label>
+              <input type="email" id="cap_email" placeholder="nombre@empresa.com">
+            </div>
+            <div class="fg">
+              <label class="lbl">Celular</label>
+              <input type="tel" id="cap_cel" placeholder="+56 9 XXXX XXXX">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cblock">
+        <div class="chead">
+          <span class="cbadge">Orquestador</span>
+          <span class="cdesc">Coordinador operativo / Comunicación diaria</span>
+        </div>
+        <div class="cfields">
+          <div class="row3">
+            <div class="fg">
+              <label class="lbl">Nombre y apellido</label>
+              <input type="text" id="orq_nombre" placeholder="Nombre Apellido">
+            </div>
+            <div class="fg">
+              <label class="lbl">Correo electrónico</label>
+              <input type="email" id="orq_email" placeholder="nombre@empresa.com">
+            </div>
+            <div class="fg">
+              <label class="lbl">Celular</label>
+              <input type="tel" id="orq_cel" placeholder="+56 9 XXXX XXXX">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-out" onclick="prev(5)">← Anterior</button>
+        <button class="btn btn-brand" onclick="next(5)">Datos de cierre →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ CIERRE -->
+  <div class="card" id="s6">
+    <div class="card-head">
+      <div class="ch-num">⑥</div>
+      <div>
+        <div class="ch-title">Datos del Traspaso</div>
+        <div class="ch-sub">Información adicional y firma del traspaso</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="fg">
+        <label class="lbl">Información adicional relevante / Otros
+          <span class="hint">Cualquier contexto importante que Onboarding deba saber</span>
+        </label>
+        <textarea id="info_adicional" rows="4" placeholder="Agregar aquí cualquier información relevante para el traspaso…"></textarea>
+      </div>
+      <div class="div"></div>
+      <div class="sec-lbl">⑦ Firma del traspaso</div>
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Traspasado por <span class="req">*</span></label>
+          <input type="text" id="traspasado_por" placeholder="Tu nombre completo">
+        </div>
+        <div class="fg">
+          <label class="lbl">KAM asignado (si aplica)</label>
+          <input type="text" id="kam_asignado" placeholder="Nombre del KAM">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Fecha de traspaso <span class="req">*</span></label>
+          <input type="date" id="fecha_traspaso">
+        </div>
+        <div></div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-out" onclick="prev(6)">← Anterior</button>
+        <button class="btn btn-brand" onclick="next(6)">Revisar y enviar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✓ ENVÍO -->
+  <div class="sum-card" id="s7">
+    <div class="sum-head">
+      <h2>✓ Listo para enviar</h2>
+      <p>Revisa el resumen · se generará el Excel y se disparará el correo vía n8n</p>
+    </div>
+    <div class="sum-body">
+      <div class="sum-grid" id="sum-grid"></div>
+      <div class="div"></div>
+      <div class="fg">
+        <label class="lbl">Correos de destino
+          <span class="hint">Separados por coma — n8n enviará el correo a estas direcciones</span>
+        </label>
+        <input type="text" id="correos_destino" placeholder="tabata@apprecio.com, marcelo@apprecio.com">
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-out" onclick="dlExcel()">⬇ Solo descargar Excel</button>
+        <button class="btn btn-ok" id="btn-send" onclick="sendN8N()">
+          <span id="send-txt">📤 Enviar vía n8n + Descargar Excel</span>
+        </button>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn btn-out" onclick="prev(7)" style="font-size:12px;padding:8px 14px">← Volver y editar</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+//  ⚙️  CONFIGURACIÓN — pega aquí tu URL de n8n antes de publicar
+// ─────────────────────────────────────────────────────────────────
+const WEBHOOK_URL = 'https://TU-INSTANCIA.app.n8n.cloud/webhook/ficha-traspaso';
+// ─────────────────────────────────────────────────────────────────
+
+let cur = 1;
+
+function gotoStep(n){
+  if(n<1||n>7) return;
+  for(let i=1;i<=6;i++) document.getElementById('s'+i)?.classList.remove('active');
+  document.getElementById('s7')?.classList.remove('active');
+  cur = n;
+  if(n===7){
+    document.getElementById('s7').classList.add('active');
+    buildSummary();
+  } else {
+    document.getElementById('s'+n)?.classList.add('active');
+  }
+  document.querySelectorAll('.prog-step').forEach(d=>{
+    const s=parseInt(d.dataset.s);
+    d.classList.remove('active','done');
+    if(s===n) d.classList.add('active');
+    if(s<n)   d.classList.add('done');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function next(f){ if(validate(f)) gotoStep(f+1); }
+function prev(f){ gotoStep(f-1); }
+
+function validate(step){
+  const map={
+    1:[{name:'tipo_piloto',radio:true,lbl:'Tipo de piloto'}],
+    2:['nombre_cliente','pais','rubro','nombre_programa','cant_usuarios'],
+    3:['dolores','objetivos','casos_uso'],
+    4:[],
+    5:['cap_nombre','cap_email'],
+    6:['traspasado_por','fecha_traspaso'],
+  };
+  // Clear previous error highlights
+  document.querySelectorAll('.field-error').forEach(el=>{
+    el.classList.remove('field-error');
+    el.style.borderColor='';
+  });
+  let firstError = null;
+  let hasError = false;
+  for(const f of (map[step]||[])){
+    if(f.radio){
+      if(!document.querySelector(`input[name="${f.name}"]:checked`)){
+        toast(`Selecciona: ${f.lbl}`,'bad'); return false;
+      }
+    } else {
+      const el=document.getElementById(f);
+      if(!el?.value.trim()){
+        el.style.borderColor='var(--brand)';
+        el.style.boxShadow='0 0 0 3px var(--brand-lt)';
+        el.classList.add('field-error');
+        if(!firstError) firstError = el;
+        hasError = true;
+      }
+    }
+  }
+  if(hasError){
+    firstError?.focus();
+    const lbl=firstError?.closest('.fg')?.querySelector('.lbl')?.childNodes[0]?.textContent?.trim()||'';
+    toast(`Completa el campo: ${lbl}`,'bad');
+    // Remove highlight after 2.5s
+    setTimeout(()=>{
+      document.querySelectorAll('.field-error').forEach(el=>{
+        el.classList.remove('field-error');
+        el.style.borderColor='';
+        el.style.boxShadow='';
+      });
+    },2500);
+    return false;
+  }
+  return true;
+}
+
+function pickPill(el,gid){
+  document.querySelectorAll(`#${gid} .pill`).forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+}
+function togChip(el){
+  el.classList.toggle('on');
+  const cb=el.querySelector('input[type=checkbox]');
+  if(cb) cb.checked=!cb.checked;
+}
+
+function collect(){
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const r=name=>document.querySelector(`input[name="${name}"]:checked`)?.value||'';
+  const mods=[...document.querySelectorAll('.mchip.on input')].map(i=>i.value).join(', ');
+  return{
+    tipo_piloto:r('tipo_piloto'), nombre_cliente:g('nombre_cliente'),
+    pais:g('pais'), rubro:g('rubro'), sitio_web:g('sitio_web'),
+    nombre_programa:g('nombre_programa'), cant_usuarios:g('cant_usuarios'),
+    dolores:g('dolores'), objetivos:g('objetivos'),
+    casos_uso:g('casos_uso'), expectativas:g('expectativas'),
+    modulos:mods, otros_modulos:g('otros_modulos'),
+    cap_nombre:g('cap_nombre'), cap_email:g('cap_email'), cap_cel:g('cap_cel'),
+    orq_nombre:g('orq_nombre'), orq_email:g('orq_email'), orq_cel:g('orq_cel'),
+    info_adicional:g('info_adicional'), traspasado_por:g('traspasado_por'),
+    fecha_traspaso:g('fecha_traspaso'), kam_asignado:g('kam_asignado'),
+  };
+}
+
+function buildSummary(){
+  const d=collect();
+  const items=[
+    ['Tipo de piloto',d.tipo_piloto],['Cliente',d.nombre_cliente],
+    ['País',d.pais],['Rubro',d.rubro],
+    ['Programa',d.nombre_programa],['Usuarios',d.cant_usuarios],
+    ['Capitán',d.cap_nombre],['Correo capitán',d.cap_email],
+    ['Traspasado por',d.traspasado_por],['KAM asignado',d.kam_asignado||'—'],
+  ];
+  document.getElementById('sum-grid').innerHTML=
+    items.map(([l,v])=>`<div class="sum-item"><div class="sum-lbl">${l}</div><div class="sum-val">${v||'—'}</div></div>`).join('');
+}
+
+function buildWB(d){
+  const wb=XLSX.utils.book_new();
+  const rows=[
+    ['FICHA DE TRASPASO · VENTAS → ONBOARDING  |  apprecio'],
+    [],
+    ['① TIPO DE PILOTO'],['Tipo de piloto:',d.tipo_piloto],[],
+    ['② DATOS DEL CLIENTE'],
+    ['Nombre del cliente:',d.nombre_cliente],['País:',d.pais],
+    ['Rubro / Industria:',d.rubro],['Sitio web:',d.sitio_web],
+    ['Nombre del Programa:',d.nombre_programa],
+    ['Cantidad de Usuarios (N° Total):',d.cant_usuarios],[],
+    ['③ DATOS DE PROSPECCIÓN'],
+    ['Dolores / Problemas principales:',d.dolores],
+    ['Objetivos estratégicos y KPIs:',d.objetivos],
+    ['Casos de uso prioritarios:',d.casos_uso],
+    ['Expectativas de tiempos:',d.expectativas],[],
+    ['④ MÓDULOS DEL PILOTO'],
+    ['Módulos seleccionados:',d.modulos],
+    ['Otros módulos (próx. 6 meses):',d.otros_modulos],[],
+    ['⑤ CONTACTOS CLAVE'],
+    ['CAPITÁN – Gerente / Tomador de decisión'],
+    ['Nombre y apellido:',d.cap_nombre],['Correo electrónico:',d.cap_email],['Celular:',d.cap_cel],[],
+    ['ORQUESTADOR – Coordinador operativo'],
+    ['Nombre y apellido:',d.orq_nombre],['Correo electrónico:',d.orq_email],['Celular:',d.orq_cel],[],
+    ['⑥ DATOS CLAVE A TRASPASAR'],
+    ['Información adicional:',d.info_adicional],[],
+    ['⑦ DATOS DEL TRASPASO'],
+    ['Traspasado por:',d.traspasado_por],
+    ['Fecha de traspaso:',d.fecha_traspaso],
+    ['KAM asignado:',d.kam_asignado],
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:46},{wch:64}];
+  XLSX.utils.book_append_sheet(wb,ws,'Ficha de Traspaso');
+  return wb;
+}
+
+function fname(d){
+  return `Ficha_Traspaso_${(d.nombre_cliente||'Cliente').replace(/\s+/g,'_')}_${d.fecha_traspaso||'sin_fecha'}.xlsx`;
+}
+function dlExcel(){
+  const d=collect(); XLSX.writeFile(buildWB(d),fname(d));
+  toast('✅ Excel descargado','good');
+}
+
+async function sendN8N(){
+  const url = WEBHOOK_URL;
+  if(!url || url.includes('TU-INSTANCIA')){
+    toast('Configura el WEBHOOK_URL en el código antes de publicar','bad'); return;
+  }
+  const d=collect();
+  const correos=document.getElementById('correos_destino').value.trim();
+  const wb=buildWB(d);
+  const b64=XLSX.write(wb,{bookType:'xlsx',type:'base64'});
+  const fn=fname(d);
+  const payload={...d,correos_destino:correos,excel_base64:b64,excel_filename:fn,timestamp:new Date().toISOString()};
+
+  const btn=document.getElementById('btn-send');
+  const txt=document.getElementById('send-txt');
+  btn.disabled=true;
+  txt.innerHTML='<span class="spin"></span> Enviando…';
+
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok){
+      XLSX.writeFile(wb,fn);
+      toast('✅ Enviado a n8n y Excel descargado','good');
+      txt.innerHTML='✅ ¡Enviado con éxito!';
+    } else { throw new Error('HTTP '+res.status); }
+  } catch(e){
+    toast('Error al conectar con n8n: '+e.message,'bad');
+    txt.innerHTML='📤 Enviar vía n8n + Descargar Excel';
+    btn.disabled=false;
+  }
+}
+
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+document.getElementById('fecha_traspaso').valueAsDate=new Date();
+</script>
+</body>
+</html>
