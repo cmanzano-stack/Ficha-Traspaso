@@ -6,7 +6,7 @@
 <title>Ficha de Traspaso · Apprecio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -131,7 +131,8 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div id="g_id_onload"
       data-client_id="980562257177-ail9k3d4jfrnr5upap4vrl2v6m6e8tag.apps.googleusercontent.com"
       data-callback="onGoogleSignIn"
-      data-auto_select="false">
+      data-auto_select="false"
+      data-cancel_on_tap_outside="false">
     </div>
     <div class="g_id_signin"
       data-type="standard" data-size="large" data-theme="filled_black"
@@ -356,6 +357,7 @@ function onGoogleSignIn(response) {
   if (!campo.value) campo.value = payload.name;
   toast('Bienvenido/a, ' + payload.name.split(' ')[0] + ' ✓', 'good');
 }
+window.onGoogleSignIn = onGoogleSignIn;
 
 document.getElementById('mod-grid').addEventListener('click', function(e){
   const chip = e.target.closest('.mchip');
