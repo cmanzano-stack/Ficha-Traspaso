@@ -12,7 +12,7 @@
 :root{
   --brand:#FA345E;--brand-dk:#D42A4E;--brand-lt:#FDE8ED;--brand-xl:#FEF3F6;
   --ok:#065F46;--ok-lt:#D1FAE5;
-  --g0:#0F172A;--g1:#1E293B;--g2:#475569;--g3:#94A3B8;--g4:#E2E8F0;--g5:#F8FAFC;
+  --g0:#0F172A;--g1:#1E293B;--g2:#475569;--g3:#94A3B8;--g4:#E2E8F0;--g5:#F8FAFC;  ★  ORQUESTADOR  —  Coordinador operativo	
   --white:#fff;--font:'Montserrat',Arial,sans-serif;
   --rad:10px;--rad-sm:7px;
   --sh:0 4px 24px rgba(250,52,94,.08);--sh-card:0 2px 20px rgba(15,23,42,.07);
@@ -143,7 +143,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="fg">
         <label class="lbl">Seleccionar tipo <span class="req">*</span></label>
         <div class="pill-wrap" id="g-tipo">
-          <label class="pill" onclick="pickPill(this,'g-tipo')"><input type="radio" name="tipo_piloto" value="POC"> 🧪 POC – Prueba de concepto (pagado)</label>
+          <label class="pill" onclick="pickPill(this,'g-tipo')"><input type="radio" name="tipo_piloto" value="POC"> 🧪 POC – Prueba de concepto</label>
           <label class="pill" onclick="pickPill(this,'g-tipo')"><input type="radio" name="tipo_piloto" value="CLIENTE"> 🏢 Cliente</label>
         </div>
       </div>
@@ -261,11 +261,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="div"></div>
       <div class="fg">
         <label class="lbl">Correos de destino<span class="hint">Separados por coma — n8n enviará el correo a estas direcciones</span></label>
-        <input type="text" id="correos_destino" placeholder="tabata@apprecio.com, marcelo@apprecio.com">
+        <input type="text" id="correos_destino" placeholder="@apprecio.com, @dcanje.com">
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-        <button class="btn btn-out" onclick="dlExcel()">⬇ Solo descargar Excel</button>
-        <button class="btn btn-ok" id="btn-send" onclick="sendN8N()"><span id="send-txt">📤 Enviar vía n8n + Descargar Excel</span></button>
+        <button class="btn btn-out" onclick="dlExcel()">⬇ Descargar Excel</button>
+        <button class="btn btn-ok" id="btn-send" onclick="sendN8N()"><span id="send-txt">📤 Enviar por Correo</span></button>
       </div>
       <div style="margin-top:16px"><button class="btn btn-out" onclick="prev(7)" style="font-size:12px;padding:8px 14px">← Volver y editar</button></div>
     </div>
