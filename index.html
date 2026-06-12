@@ -525,14 +525,10 @@ async function sendN8N(){
   if(!googleUser){ toast('Debes iniciar sesión con Google primero','bad'); return; }
 
   const d=collect();
-  const wb=buildExcel(d);
-  const b64=XLSX.write(wb,{bookType:'xlsx',type:'base64'});
-  const fn=fname(d);
   const payload={
     ...d,
     correos_destino: googleUser.email,
     remitente_nombre: googleUser.name,
-    excel_base64:b64, excel_filename:fn,
     timestamp:new Date().toISOString()
   };
 
