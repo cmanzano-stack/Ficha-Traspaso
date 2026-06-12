@@ -211,29 +211,18 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <div class="fg"><label class="lbl">Nombre del Programa <span class="req">*</span></label><input type="text" id="nombre_programa" placeholder="Ej: Programa Reconoce"></div>
         <div class="fg"><label class="lbl">N° total de usuarios <span class="req">*</span></label><input type="number" id="cant_usuarios" placeholder="Ej: 500" min="1"></div>
       </div>
-      <div class="row2">
-        <div class="fg"><label class="lbl">Área principal del equipo <span class="req">*</span></label>
-          <select id="area_equipo">
-            <option value="">Seleccionar…</option>
-            <option>Fuerza de ventas / Comercial</option>
-            <option>Operaciones / Producción</option>
-            <option>RRHH / People</option>
-            <option>Atención al cliente / Servicio</option>
-            <option>Tecnología / IT</option>
-            <option>Logística / Supply Chain</option>
-            <option>Toda la organización</option>
-            <option>Otro</option>
-          </select>
-        </div>
-        <div class="fg"><label class="lbl">Tamaño del equipo objetivo <span class="req">*</span></label>
-          <select id="tamano_equipo">
-            <option value="">Seleccionar…</option>
-            <option>Pequeño (10-50 personas)</option>
-            <option>Mediano (50-200 personas)</option>
-            <option>Grande (200-1.000 personas)</option>
-            <option>Enterprise (1.000+ personas)</option>
-          </select>
-        </div>
+      <div class="fg"><label class="lbl">Área principal del equipo <span class="req">*</span></label>
+        <select id="area_equipo">
+          <option value="">Seleccionar…</option>
+          <option>Fuerza de ventas / Comercial</option>
+          <option>Operaciones / Producción</option>
+          <option>RRHH / People</option>
+          <option>Atención al cliente / Servicio</option>
+          <option>Tecnología / IT</option>
+          <option>Logística / Supply Chain</option>
+          <option>Toda la organización</option>
+          <option>Otro</option>
+        </select>
       </div>
       <div class="nav"><button class="btn btn-out" onclick="prev(2)">← Anterior</button><button class="btn btn-brand" onclick="next(2)">Datos de prospección →</button></div>
     </div>
@@ -601,7 +590,7 @@ function prev(f){ gotoStep(f-1); }
 function validate(step){
   const map={
     1:[{name:'tipo_piloto',radio:true,lbl:'Tipo de piloto'}],
-    2:['nombre_cliente','pais','rubro','nombre_programa','cant_usuarios','area_equipo','tamano_equipo'],
+    2:['nombre_cliente','pais','rubro','nombre_programa','cant_usuarios','area_equipo'],
     3:['dolores','intentos_previos','impacto_negocio','objetivos','casos_uso','sponsor_ejecutivo','inicio_implementacion','madurez_digital','objetivo_programa'],
     4:[],
     5:['cap_nombre','cap_cargo','cap_email','cap_cel','orq_nombre','orq_email','orq_cel'],
@@ -660,7 +649,6 @@ function validateAll(){
     nombre_programa: document.getElementById('nombre_programa')?.value.trim(),
     cant_usuarios: document.getElementById('cant_usuarios')?.value.trim(),
     area_equipo: document.getElementById('area_equipo')?.value.trim(),
-    tamano_equipo: document.getElementById('tamano_equipo')?.value.trim(),
     dolores: document.getElementById('dolores')?.value.trim(),
     intentos_previos: document.getElementById('intentos_previos')?.value.trim(),
     impacto_negocio: document.getElementById('impacto_negocio')?.value.trim(),
@@ -683,7 +671,7 @@ function validateAll(){
   const labels = {
     tipo_piloto:'Tipo de piloto', nombre_cliente:'Nombre del cliente',
     pais:'País', rubro:'Rubro', nombre_programa:'Nombre del Programa',
-    cant_usuarios:'N° de usuarios', area_equipo:'Área principal del equipo', tamano_equipo:'Tamaño del equipo objetivo',
+    cant_usuarios:'N° de usuarios', area_equipo:'Área principal del equipo',
     dolores:'Dolores detectados', intentos_previos:'Qué han intentado antes', impacto_negocio:'Impacto en el negocio',
     objetivos:'Objetivos y KPIs', casos_uso:'Casos de uso',
     sponsor_ejecutivo:'Sponsor ejecutivo', inicio_implementacion:'Inicio de implementación',
@@ -720,7 +708,7 @@ function validateAll(){
 function stepOf(key){
   const stepMap={
     tipo_piloto:1,
-    nombre_cliente:2,pais:2,rubro:2,nombre_programa:2,cant_usuarios:2,area_equipo:2,tamano_equipo:2,
+    nombre_cliente:2,pais:2,rubro:2,nombre_programa:2,cant_usuarios:2,area_equipo:2,
     dolores:3,intentos_previos:3,impacto_negocio:3,objetivos:3,casos_uso:3,
     sponsor_ejecutivo:3,inicio_implementacion:3,madurez_digital:3,objetivo_programa:3,
     cap_nombre:5,cap_cargo:5,cap_email:5,cap_cel:5,orq_nombre:5,orq_email:5,orq_cel:5,
@@ -734,6 +722,16 @@ function pickPill(el,gid){
   el.classList.add('on');
 }
 
+// Deriva el rango de tamaño del equipo (para el formulario Fuerza) desde N° de usuarios
+function tamanoEquipoDesde(cantUsuarios){
+  const n = parseInt(cantUsuarios, 10);
+  if(isNaN(n)) return '—';
+  if(n <= 50) return 'Pequeño (10-50 personas)';
+  if(n <= 200) return 'Mediano (50-200 personas)';
+  if(n <= 1000) return 'Grande (200-1.000 personas)';
+  return 'Enterprise (1.000+ personas)';
+}
+
 function collect(){
   const g=id=>(document.getElementById(id)?.value||'').trim();
   const r=name=>document.querySelector('input[name="'+name+'"]:checked')?.value||'';
@@ -741,7 +739,7 @@ function collect(){
     tipo_piloto:r('tipo_piloto'), nombre_cliente:g('nombre_cliente'),
     pais:g('pais'), rubro:g('rubro'), sitio_web:g('sitio_web'),
     nombre_programa:g('nombre_programa'), cant_usuarios:g('cant_usuarios'),
-    area_equipo:g('area_equipo'), tamano_equipo:g('tamano_equipo'),
+    area_equipo:g('area_equipo'), tamano_equipo:tamanoEquipoDesde(g('cant_usuarios')),
     dolores:g('dolores'), intentos_previos:g('intentos_previos'), impacto_negocio:g('impacto_negocio'),
     objetivos:g('objetivos'),
     casos_uso:g('casos_uso'), expectativas:g('expectativas'),
