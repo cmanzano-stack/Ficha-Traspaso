@@ -162,6 +162,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="tb-user" id="tb-user" style="display:none">
       <img class="tb-avatar" id="tb-avatar" src="" alt="">
       <span class="tb-uname" id="tb-uname"></span>
+      <span onclick="logoutSession()" title="Cerrar sesión" style="cursor:pointer;color:rgba(255,255,255,.4);font-size:14px;margin-left:2px;padding:2px">✕</span>
     </div>
     <div class="tb-badge">Ventas → Onboarding</div>
   </div>
@@ -541,16 +542,63 @@ function bufferToBase64(buffer){
   return btoa(binary);
 }
 
-function onGoogleSignIn(response) {
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  googleUser = { email: payload.email, name: payload.name, picture: payload.picture };
-  document.getElementById('tb-avatar').src = payload.picture;
-  document.getElementById('tb-uname').textContent = payload.name.split(' ')[0];
+const AUTH_STORAGE_KEY = 'apprecio_ficha_traspaso_auth';
+const AUTH_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 días
+
+function applyGoogleUser(user) {
+  googleUser = user;
+  document.getElementById('tb-avatar').src = user.picture;
+  document.getElementById('tb-uname').textContent = user.name.split(' ')[0];
   document.getElementById('tb-user').style.display = 'flex';
   document.getElementById('auth-gate').classList.add('hidden');
   const campo = document.getElementById('traspasado_por');
-  if (!campo.value) campo.value = payload.name;
+  if (!campo.value) campo.value = user.name;
+}
+
+function saveSession(user) {
+  try {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+      user, expira: Date.now() + AUTH_DURATION_MS
+    }));
+  } catch(e) {}
+}
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data.expira || Date.now() > data.expira) {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+    return data.user;
+  } catch(e) { return null; }
+}
+
+// Al cargar la página, intenta recuperar sesión guardada (válida por 30 días)
+(function tryRestoreSession(){
+  const saved = loadSession();
+  if (saved) {
+    applyGoogleUser(saved);
+    toast('Sesión recuperada · ' + saved.name.split(' ')[0], 'good');
+  }
+})();
+
+function onGoogleSignIn(response) {
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  const user = { email: payload.email, name: payload.name, picture: payload.picture };
+  applyGoogleUser(user);
+  saveSession(user);
   toast('Bienvenido/a, ' + payload.name.split(' ')[0] + ' ✓', 'good');
+}
+
+function logoutSession() {
+  try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch(e) {}
+  googleUser = null;
+  document.getElementById('tb-user').style.display = 'none';
+  document.getElementById('auth-gate').classList.remove('hidden');
+  toast('Sesión cerrada', 'ok');
 }
 
 document.getElementById('mod-grid').addEventListener('click', function(e){
