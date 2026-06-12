@@ -520,12 +520,14 @@ function validate(step){
     1:[{name:'tipo_piloto',radio:true,lbl:'Tipo de piloto'}],
     2:['nombre_cliente','pais','rubro','nombre_programa','cant_usuarios'],
     3:['dolores','objetivos','casos_uso'],
-    4:[],5:['cap_nombre','cap_email'],6:['traspasado_por','fecha_traspaso'],
+    4:[],
+    5:['cap_nombre','cap_email','cap_cel','orq_nombre','orq_email','orq_cel'],
+    6:['traspasado_por','fecha_traspaso'],
   };
   document.querySelectorAll('.field-err').forEach(el=>{
     el.classList.remove('field-err'); el.style.borderColor=''; el.style.boxShadow='';
   });
-  let errors=[], first=null;
+  let errors=[], first=null, emailErr=false;
   for(const f of (map[step]||[])){
     if(f.radio){
       if(!document.querySelector('input[name="'+f.name+'"]:checked')){
@@ -533,15 +535,22 @@ function validate(step){
       }
     } else {
       const el=document.getElementById(f);
-      if(!el?.value.trim()){
+      const val=el?.value.trim()||'';
+      const isEmail = el?.type === 'email';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!val){
         el.classList.add('field-err'); errors.push(el);
         if(!first) first=el;
+      } else if(isEmail && !emailRegex.test(val)){
+        el.classList.add('field-err'); errors.push(el);
+        if(!first) first=el;
+        emailErr=true;
       }
     }
   }
   if(errors.length){
     first.focus();
-    toast('Completa todos los campos requeridos','bad');
+    toast(emailErr ? 'Ingresa un correo electrónico válido (ej: nombre@empresa.com)' : 'Completa todos los campos requeridos','bad');
     setTimeout(()=>errors.forEach(el=>{
       el.classList.remove('field-err'); el.style.borderColor=''; el.style.boxShadow='';
     }),2500);
@@ -563,6 +572,10 @@ function validateAll(){
     casos_uso: document.getElementById('casos_uso')?.value.trim(),
     cap_nombre: document.getElementById('cap_nombre')?.value.trim(),
     cap_email: document.getElementById('cap_email')?.value.trim(),
+    cap_cel: document.getElementById('cap_cel')?.value.trim(),
+    orq_nombre: document.getElementById('orq_nombre')?.value.trim(),
+    orq_email: document.getElementById('orq_email')?.value.trim(),
+    orq_cel: document.getElementById('orq_cel')?.value.trim(),
     traspasado_por: document.getElementById('traspasado_por')?.value.trim(),
     fecha_traspaso: document.getElementById('fecha_traspaso')?.value.trim(),
   };
@@ -571,13 +584,33 @@ function validateAll(){
     pais:'País', rubro:'Rubro', nombre_programa:'Nombre del Programa',
     cant_usuarios:'N° de usuarios', dolores:'Dolores detectados',
     objetivos:'Objetivos y KPIs', casos_uso:'Casos de uso',
-    cap_nombre:'Nombre Capitán', cap_email:'Correo Capitán',
+    cap_nombre:'Nombre Capitán', cap_email:'Correo Capitán', cap_cel:'Celular Capitán',
+    orq_nombre:'Nombre Orquestador', orq_email:'Correo Orquestador', orq_cel:'Celular Orquestador',
     traspasado_por:'Traspasado por', fecha_traspaso:'Fecha de traspaso',
   };
   for(const [key, val] of Object.entries(allFields)){
-    if(!val){ toast('Campo vacío: ' + labels[key], 'bad'); return false; }
+    if(!val){ toast('Campo vacío: ' + labels[key], 'bad'); gotoStep(stepOf(key)); return false; }
+  }
+  // Validar formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRegex.test(allFields.cap_email)){
+    toast('Correo del Capitán inválido (ej: nombre@empresa.com)','bad'); gotoStep(5); return false;
+  }
+  if(!emailRegex.test(allFields.orq_email)){
+    toast('Correo del Orquestador inválido (ej: nombre@empresa.com)','bad'); gotoStep(5); return false;
   }
   return true;
+}
+
+function stepOf(key){
+  const stepMap={
+    tipo_piloto:1,
+    nombre_cliente:2,pais:2,rubro:2,nombre_programa:2,cant_usuarios:2,
+    dolores:3,objetivos:3,casos_uso:3,
+    cap_nombre:5,cap_email:5,cap_cel:5,orq_nombre:5,orq_email:5,orq_cel:5,
+    traspasado_por:6,fecha_traspaso:6,
+  };
+  return stepMap[key]||7;
 }
 
 function pickPill(el,gid){
