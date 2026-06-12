@@ -211,6 +211,30 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <div class="fg"><label class="lbl">Nombre del Programa <span class="req">*</span></label><input type="text" id="nombre_programa" placeholder="Ej: Programa Reconoce"></div>
         <div class="fg"><label class="lbl">N° total de usuarios <span class="req">*</span></label><input type="number" id="cant_usuarios" placeholder="Ej: 500" min="1"></div>
       </div>
+      <div class="row2">
+        <div class="fg"><label class="lbl">Área principal del equipo <span class="req">*</span></label>
+          <select id="area_equipo">
+            <option value="">Seleccionar…</option>
+            <option>Fuerza de ventas / Comercial</option>
+            <option>Operaciones / Producción</option>
+            <option>RRHH / People</option>
+            <option>Atención al cliente / Servicio</option>
+            <option>Tecnología / IT</option>
+            <option>Logística / Supply Chain</option>
+            <option>Toda la organización</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="fg"><label class="lbl">Tamaño del equipo objetivo <span class="req">*</span></label>
+          <select id="tamano_equipo">
+            <option value="">Seleccionar…</option>
+            <option>Pequeño (10-50 personas)</option>
+            <option>Mediano (50-200 personas)</option>
+            <option>Grande (200-1.000 personas)</option>
+            <option>Enterprise (1.000+ personas)</option>
+          </select>
+        </div>
+      </div>
       <div class="nav"><button class="btn btn-out" onclick="prev(2)">← Anterior</button><button class="btn btn-brand" onclick="next(2)">Datos de prospección →</button></div>
     </div>
   </div>
@@ -220,12 +244,58 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <div class="card-head"><div class="ch-num">③</div><div><div class="ch-title">Datos de Prospección</div><div class="ch-sub">Contexto comercial del cliente</div></div></div>
     <div class="card-body">
       <div class="fg"><label class="lbl">Dolores / Problemas principales detectados <span class="req">*</span></label><textarea id="dolores" rows="3" placeholder="Describe los problemas o desafíos clave…"></textarea></div>
+      <div class="fg"><label class="lbl">Qué han intentado antes para resolverlo <span class="req">*</span></label><textarea id="intentos_previos" rows="2" placeholder="¿Qué soluciones o medidas ya probaron?…"></textarea></div>
+      <div class="fg"><label class="lbl">Cómo afecta este problema a los resultados del negocio <span class="req">*</span></label><textarea id="impacto_negocio" rows="2" placeholder="¿Qué impacto tiene en ventas, productividad, rotación, etc.?…"></textarea></div>
       <div class="fg"><label class="lbl">Objetivos estratégicos y KPIs esperados <span class="req">*</span></label><textarea id="objetivos" rows="3" placeholder="¿Qué métricas esperan impactar con Apprecio?…"></textarea></div>
       <div class="fg"><label class="lbl">Casos de uso prioritarios a corto plazo <span class="req">*</span></label><textarea id="casos_uso" rows="3" placeholder="¿Qué quieren hacer primero con la plataforma?…"></textarea></div>
       <div class="fg"><label class="lbl">Expectativas de tiempos de uso</label><textarea id="expectativas" rows="2" placeholder="¿Tienen urgencias o plazos definidos?…"></textarea></div>
+      <div class="row2">
+        <div class="fg"><label class="lbl">Sponsor ejecutivo del proyecto <span class="req">*</span></label>
+          <select id="sponsor_ejecutivo">
+            <option value="">Seleccionar…</option>
+            <option>CEO / Gerente General</option>
+            <option>Gerente de RRHH / People</option>
+            <option>Gerente Comercial / Ventas</option>
+            <option>Gerente de Operaciones</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="fg"><label class="lbl">Cuándo estiman comenzar la implementación <span class="req">*</span></label>
+          <select id="inicio_implementacion">
+            <option value="">Seleccionar…</option>
+            <option>Inmediato (próximas 2 semanas)</option>
+            <option>En 1 mes</option>
+            <option>En 2-3 meses</option>
+            <option>En más de 3 meses</option>
+            <option>Por definir</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label class="lbl">Madurez digital del equipo <span class="req">*</span></label>
+        <select id="madurez_digital">
+          <option value="">Seleccionar…</option>
+          <option>Nivel 1 - Sin herramientas digitales (papel, procesos manuales)</option>
+          <option>Nivel 2 - Uso básico (Excel, email, WhatsApp)</option>
+          <option>Nivel 3 - Uso mixto (algunas herramientas sin integración)</option>
+          <option>Nivel 4 - Digital con datos limitados</option>
+          <option>Nivel 5 - 100% digital y data-driven</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">Objetivo principal del programa <span class="req">*</span></label>
+        <select id="objetivo_programa">
+          <option value="">Seleccionar…</option>
+          <option value="Aumentar engagement y sentido de pertenencia">Aumentar engagement y sentido de pertenencia — El equipo está desmotivado, siente que su esfuerzo no se ve ni se reconoce. Queremos que la gente quiera venir a trabajar.</option>
+          <option value="Incrementar performance comercial">Incrementar performance comercial — Tenemos metas de venta que no se están cumpliendo. Necesitamos visibilidad del avance y que el equipo sienta que vale la pena esforzarse.</option>
+          <option value="Mejorar productividad organizacional">Mejorar productividad organizacional — Las tareas operativas no se completan a tiempo, hay mucho trabajo manual y poco seguimiento. No es un equipo comercial.</option>
+          <option value="Capacitar y nivelar al equipo">Capacitar y nivelar al equipo — El equipo necesita aprender o certificarse en algo específico. El conocimiento es desigual y eso afecta los resultados.</option>
+          <option value="Reducir la rotación de personas">Reducir la rotación de personas — Estamos perdiendo colaboradores clave con frecuencia. El costo de reemplazarlos es alto y queremos retener al talento.</option>
+          <option value="Centralizar todos los reconocimientos en un solo lugar">Centralizar todos los reconocimientos en un solo lugar — Hoy los reconocimientos se hacen por correo, Excel o de forma manual. Queremos que todo quede en una sola plataforma con reglas claras.</option>
+        </select>
+      </div>
       <div class="nav"><button class="btn btn-out" onclick="prev(3)">← Anterior</button><button class="btn btn-brand" onclick="next(3)">Módulos →</button></div>
     </div>
   </div>
+
 
   <!-- ④ MÓDULOS -->
   <div class="card" id="s4">
@@ -259,8 +329,11 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
         <div class="cfields">
           <div class="row3">
             <div class="fg"><label class="lbl">Nombre y apellido <span class="req">*</span></label><input type="text" id="cap_nombre" placeholder="Nombre Apellido"></div>
+            <div class="fg"><label class="lbl">Cargo <span class="req">*</span></label><input type="text" id="cap_cargo" placeholder="Ej: Gerente de RRHH"></div>
             <div class="fg"><label class="lbl">Correo electrónico <span class="req">*</span></label><input type="email" id="cap_email" placeholder="nombre@empresa.com"></div>
-            <div class="fg"><label class="lbl">Celular</label><input type="tel" id="cap_cel" placeholder="+56 9 XXXX XXXX"></div>
+          </div>
+          <div class="row3" style="margin-top:14px">
+            <div class="fg"><label class="lbl">Celular <span class="req">*</span></label><input type="tel" id="cap_cel" placeholder="+56 9 XXXX XXXX"></div>
           </div>
         </div>
       </div>
@@ -422,9 +495,12 @@ async function buildExcelFormatted(d){
   field('Nombre del cliente:',d.nombre_cliente); field('País:',d.pais);
   field('Rubro / Industria:',d.rubro); field('Sitio web:',d.sitio_web);
   field('Nombre del Programa:',d.nombre_programa); field('N° total de usuarios:',d.cant_usuarios);
+  field('Área principal del equipo:',d.area_equipo); field('Tamaño del equipo objetivo:',d.tamano_equipo);
 
   section('③ DATOS DE PROSPECCIÓN');
   field('Dolores / Problemas principales:',d.dolores,true,50);
+  field('Qué han intentado antes:',d.intentos_previos,true,40);
+  field('Cómo afecta al negocio:',d.impacto_negocio,true,40);
   field('Objetivos y KPIs esperados:',d.objetivos,true,50);
   field('Casos de uso prioritarios:',d.casos_uso,true,50);
   field('Expectativas de tiempos:',d.expectativas,true,40);
@@ -434,14 +510,21 @@ async function buildExcelFormatted(d){
 
   section('⑤ CONTACTOS CLAVE');
   contactHeader('CAPITÁN','Gerente / Tomador de decisión');
-  field('Nombre y apellido:',d.cap_nombre); field('Correo electrónico:',d.cap_email); field('Celular:',d.cap_cel);
+  field('Nombre y apellido:',d.cap_nombre); field('Cargo:',d.cap_cargo);
+  field('Correo electrónico:',d.cap_email); field('Celular:',d.cap_cel);
   spacer(4);
   contactHeader('ORQUESTADOR','Coordinador operativo');
   field('Nombre y apellido:',d.orq_nombre); field('Correo electrónico:',d.orq_email); field('Celular:',d.orq_cel);
 
-  section('⑥ DATOS CLAVE A TRASPASAR'); field('Información adicional:',d.info_adicional,true,55);
+  section('⑥ PLAN DE IMPLEMENTACIÓN (APPRECIO BEAT)');
+  field('Sponsor ejecutivo del proyecto:',d.sponsor_ejecutivo);
+  field('Cuándo estiman comenzar:',d.inicio_implementacion);
+  field('Madurez digital del equipo:',d.madurez_digital,true,40);
+  field('Objetivo principal del programa:',d.objetivo_programa,true,55);
 
-  section('⑦ DATOS DEL TRASPASO');
+  section('⑦ DATOS CLAVE A TRASPASAR'); field('Información adicional:',d.info_adicional,true,55);
+
+  section('⑧ DATOS DEL TRASPASO');
   field('Traspasado por:',d.traspasado_por); field('Fecha de traspaso:',d.fecha_traspaso); field('KAM asignado:',d.kam_asignado);
 
   // FOOTER
@@ -518,10 +601,10 @@ function prev(f){ gotoStep(f-1); }
 function validate(step){
   const map={
     1:[{name:'tipo_piloto',radio:true,lbl:'Tipo de piloto'}],
-    2:['nombre_cliente','pais','rubro','nombre_programa','cant_usuarios'],
-    3:['dolores','objetivos','casos_uso'],
+    2:['nombre_cliente','pais','rubro','nombre_programa','cant_usuarios','area_equipo','tamano_equipo'],
+    3:['dolores','intentos_previos','impacto_negocio','objetivos','casos_uso','sponsor_ejecutivo','inicio_implementacion','madurez_digital','objetivo_programa'],
     4:[],
-    5:['cap_nombre','cap_email','cap_cel','orq_nombre','orq_email','orq_cel'],
+    5:['cap_nombre','cap_cargo','cap_email','cap_cel','orq_nombre','orq_email','orq_cel'],
     6:['traspasado_por','fecha_traspaso'],
   };
   document.querySelectorAll('.field-err').forEach(el=>{
@@ -576,10 +659,19 @@ function validateAll(){
     rubro: document.getElementById('rubro')?.value.trim(),
     nombre_programa: document.getElementById('nombre_programa')?.value.trim(),
     cant_usuarios: document.getElementById('cant_usuarios')?.value.trim(),
+    area_equipo: document.getElementById('area_equipo')?.value.trim(),
+    tamano_equipo: document.getElementById('tamano_equipo')?.value.trim(),
     dolores: document.getElementById('dolores')?.value.trim(),
+    intentos_previos: document.getElementById('intentos_previos')?.value.trim(),
+    impacto_negocio: document.getElementById('impacto_negocio')?.value.trim(),
     objetivos: document.getElementById('objetivos')?.value.trim(),
     casos_uso: document.getElementById('casos_uso')?.value.trim(),
+    sponsor_ejecutivo: document.getElementById('sponsor_ejecutivo')?.value.trim(),
+    inicio_implementacion: document.getElementById('inicio_implementacion')?.value.trim(),
+    madurez_digital: document.getElementById('madurez_digital')?.value.trim(),
+    objetivo_programa: document.getElementById('objetivo_programa')?.value.trim(),
     cap_nombre: document.getElementById('cap_nombre')?.value.trim(),
+    cap_cargo: document.getElementById('cap_cargo')?.value.trim(),
     cap_email: document.getElementById('cap_email')?.value.trim(),
     cap_cel: document.getElementById('cap_cel')?.value.trim(),
     orq_nombre: document.getElementById('orq_nombre')?.value.trim(),
@@ -591,9 +683,12 @@ function validateAll(){
   const labels = {
     tipo_piloto:'Tipo de piloto', nombre_cliente:'Nombre del cliente',
     pais:'País', rubro:'Rubro', nombre_programa:'Nombre del Programa',
-    cant_usuarios:'N° de usuarios', dolores:'Dolores detectados',
+    cant_usuarios:'N° de usuarios', area_equipo:'Área principal del equipo', tamano_equipo:'Tamaño del equipo objetivo',
+    dolores:'Dolores detectados', intentos_previos:'Qué han intentado antes', impacto_negocio:'Impacto en el negocio',
     objetivos:'Objetivos y KPIs', casos_uso:'Casos de uso',
-    cap_nombre:'Nombre Capitán', cap_email:'Correo Capitán', cap_cel:'Celular Capitán',
+    sponsor_ejecutivo:'Sponsor ejecutivo', inicio_implementacion:'Inicio de implementación',
+    madurez_digital:'Madurez digital del equipo', objetivo_programa:'Objetivo principal del programa',
+    cap_nombre:'Nombre Capitán', cap_cargo:'Cargo Capitán', cap_email:'Correo Capitán', cap_cel:'Celular Capitán',
     orq_nombre:'Nombre Orquestador', orq_email:'Correo Orquestador', orq_cel:'Celular Orquestador',
     traspasado_por:'Traspasado por', fecha_traspaso:'Fecha de traspaso',
   };
@@ -611,7 +706,7 @@ function validateAll(){
   // Validar que los campos de texto cortos tengan sentido (no "asdada" etc.)
   const gibberishFields = {
     nombre_cliente:2, rubro:2, nombre_programa:2,
-    cap_nombre:5, orq_nombre:5, traspasado_por:6,
+    cap_nombre:5, cap_cargo:5, orq_nombre:5, traspasado_por:6,
   };
   for(const [key, step] of Object.entries(gibberishFields)){
     if(looksLikeGibberish(allFields[key])){
@@ -625,9 +720,10 @@ function validateAll(){
 function stepOf(key){
   const stepMap={
     tipo_piloto:1,
-    nombre_cliente:2,pais:2,rubro:2,nombre_programa:2,cant_usuarios:2,
-    dolores:3,objetivos:3,casos_uso:3,
-    cap_nombre:5,cap_email:5,cap_cel:5,orq_nombre:5,orq_email:5,orq_cel:5,
+    nombre_cliente:2,pais:2,rubro:2,nombre_programa:2,cant_usuarios:2,area_equipo:2,tamano_equipo:2,
+    dolores:3,intentos_previos:3,impacto_negocio:3,objetivos:3,casos_uso:3,
+    sponsor_ejecutivo:3,inicio_implementacion:3,madurez_digital:3,objetivo_programa:3,
+    cap_nombre:5,cap_cargo:5,cap_email:5,cap_cel:5,orq_nombre:5,orq_email:5,orq_cel:5,
     traspasado_por:6,fecha_traspaso:6,
   };
   return stepMap[key]||7;
@@ -645,10 +741,14 @@ function collect(){
     tipo_piloto:r('tipo_piloto'), nombre_cliente:g('nombre_cliente'),
     pais:g('pais'), rubro:g('rubro'), sitio_web:g('sitio_web'),
     nombre_programa:g('nombre_programa'), cant_usuarios:g('cant_usuarios'),
-    dolores:g('dolores'), objetivos:g('objetivos'),
+    area_equipo:g('area_equipo'), tamano_equipo:g('tamano_equipo'),
+    dolores:g('dolores'), intentos_previos:g('intentos_previos'), impacto_negocio:g('impacto_negocio'),
+    objetivos:g('objetivos'),
     casos_uso:g('casos_uso'), expectativas:g('expectativas'),
+    sponsor_ejecutivo:g('sponsor_ejecutivo'), inicio_implementacion:g('inicio_implementacion'),
+    madurez_digital:g('madurez_digital'), objetivo_programa:g('objetivo_programa'),
     modulos:getModules().join(', '), otros_modulos:g('otros_modulos'),
-    cap_nombre:g('cap_nombre'), cap_email:g('cap_email'), cap_cel:g('cap_cel'),
+    cap_nombre:g('cap_nombre'), cap_cargo:g('cap_cargo'), cap_email:g('cap_email'), cap_cel:g('cap_cel'),
     orq_nombre:g('orq_nombre'), orq_email:g('orq_email'), orq_cel:g('orq_cel'),
     info_adicional:g('info_adicional'), traspasado_por:g('traspasado_por'),
     fecha_traspaso:g('fecha_traspaso'), kam_asignado:g('kam_asignado'),
@@ -661,7 +761,9 @@ function buildSummary(){
     ['Tipo de piloto',d.tipo_piloto],['Cliente',d.nombre_cliente],
     ['País',d.pais],['Rubro',d.rubro],
     ['Programa',d.nombre_programa],['Usuarios',d.cant_usuarios],
-    ['Módulos',d.modulos||'—'],['Capitán',d.cap_nombre],
+    ['Área del equipo',d.area_equipo],['Tamaño del equipo',d.tamano_equipo],
+    ['Módulos',d.modulos||'—'],['Capitán',d.cap_nombre+(d.cap_cargo?' · '+d.cap_cargo:'')],
+    ['Sponsor ejecutivo',d.sponsor_ejecutivo],['Inicio implementación',d.inicio_implementacion],
     ['Traspasado por',d.traspasado_por],['KAM',d.kam_asignado||'—'],
   ];
   document.getElementById('sum-grid').innerHTML=
