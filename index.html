@@ -527,7 +527,7 @@ function validate(step){
   document.querySelectorAll('.field-err').forEach(el=>{
     el.classList.remove('field-err'); el.style.borderColor=''; el.style.boxShadow='';
   });
-  let errors=[], first=null, emailErr=false;
+  let errors=[], first=null, emailErr=false, gibberishErr=false;
   for(const f of (map[step]||[])){
     if(f.radio){
       if(!document.querySelector('input[name="'+f.name+'"]:checked')){
@@ -538,6 +538,8 @@ function validate(step){
       const val=el?.value.trim()||'';
       const isEmail = el?.type === 'email';
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // Campos de texto/textarea cortos (no textareas largas) se validan por "sentido"
+      const checkGibberish = (el.tagName === 'INPUT' && el.type === 'text');
       if(!val){
         el.classList.add('field-err'); errors.push(el);
         if(!first) first=el;
@@ -545,12 +547,19 @@ function validate(step){
         el.classList.add('field-err'); errors.push(el);
         if(!first) first=el;
         emailErr=true;
+      } else if(checkGibberish && looksLikeGibberish(val)){
+        el.classList.add('field-err'); errors.push(el);
+        if(!first) first=el;
+        gibberishErr=true;
       }
     }
   }
   if(errors.length){
     first.focus();
-    toast(emailErr ? 'Ingresa un correo electrónico válido (ej: nombre@empresa.com)' : 'Completa todos los campos requeridos','bad');
+    let msg='Completa todos los campos requeridos';
+    if(emailErr) msg='Ingresa un correo electrónico válido (ej: nombre@empresa.com)';
+    else if(gibberishErr) msg='Revisa los campos marcados — el texto ingresado no parece válido';
+    toast(msg,'bad');
     setTimeout(()=>errors.forEach(el=>{
       el.classList.remove('field-err'); el.style.borderColor=''; el.style.boxShadow='';
     }),2500);
@@ -598,6 +607,17 @@ function validateAll(){
   }
   if(!emailRegex.test(allFields.orq_email)){
     toast('Correo del Orquestador inválido (ej: nombre@empresa.com)','bad'); gotoStep(5); return false;
+  }
+  // Validar que los campos de texto cortos tengan sentido (no "asdada" etc.)
+  const gibberishFields = {
+    nombre_cliente:2, rubro:2, nombre_programa:2,
+    cap_nombre:5, orq_nombre:5, traspasado_por:6,
+  };
+  for(const [key, step] of Object.entries(gibberishFields)){
+    if(looksLikeGibberish(allFields[key])){
+      toast('Revisa el campo "'+labels[key]+'" — el texto no parece válido','bad');
+      gotoStep(step); return false;
+    }
   }
   return true;
 }
@@ -720,6 +740,20 @@ function toast(msg,type='ok'){
   t.textContent=msg; t.className='toast '+type+' show';
   setTimeout(()=>t.classList.remove('show'),3500);
 }
+
+// ── Validación de calidad de texto (evita "asdasd", "aaaa", etc.) ──
+function looksLikeGibberish(text){
+  const t = text.trim();
+  if(t.length < 2) return true;
+  // Sin ninguna vocal (a,e,i,o,u incluyendo tildes)
+  if(!/[aeiouáéíóúAEIOUÁÉÍÓÚ]/.test(t)) return true;
+  // Mismo caracter repetido 4+ veces (aaaa, ssss)
+  if(/(.)\1{3,}/.test(t)) return true;
+  // Patrón de teclado tipo "asdf", "qwerty", "zxcv"
+  if(/^(asdf|asdas|asdad|qwer|zxcv|zxcvb|jkl|lkj|fdsa|hjkl)/i.test(t)) return true;
+  return false;
+}
+
 
 document.getElementById('fecha_traspaso').valueAsDate=new Date();
 </script>
